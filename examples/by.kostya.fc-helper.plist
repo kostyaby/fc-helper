@@ -5,7 +5,7 @@
 		<key>Label</key>
 		<string>by.kostya.fc-helper</string>
 		<key>Program</key>
-		<string>Put here a valid path to the helper.py on your Mac</string>
+		<string>Put here a valid path to the fc-helper/app.py on your Mac</string>
 		<key>RunAtLoad</key>
 		<true/>
 		<key>StartInterval</key>

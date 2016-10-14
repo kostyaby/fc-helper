@@ -1,11 +1,12 @@
 {
-	"folders": 
+	"tracked_directories": 
 	[
 		{
 			"path": "~/Downloads", 
-			"ignore": 
+			"ignore_regexes": 
 			[
 				".download$",
+				".part$",
 				"^Torrents$"
 			]
 		}
