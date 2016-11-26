@@ -2,8 +2,7 @@ class Constant:
   class Clock:
     DIRECTORY_A_DAY_TEMPLATE = "Directory-%04d-%02d-%02d"   
     MILLIS_IN_SECOND = 1000
-    UNSORTED_TO_SORTED_THRESHOLD_MILLIS = 600000 # 10 minutes
-
+    UNSORTED_TO_SORTED_THRESHOLD_MILLIS = 600000 # = 10 minutes
 
   class Config:
     TRACKED_DIRECTORIES_KEY = "tracked_directories"

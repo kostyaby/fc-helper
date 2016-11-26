@@ -18,7 +18,7 @@ class TrackedDirectory:
 
 
   def get_all_tracked_entity_paths(self):
-    return [file[len(self.path) + 1:] for file in glob.glob(self.path + "/*")]
+    return [os.path.basename(file) for file in glob.glob(self.path + "/*")]
 
 
   def get_absolute_tracked_entity_path(self, tracked_entity_path):

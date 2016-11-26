@@ -16,5 +16,8 @@ class Clock:
         self.cached_today.year, self.cached_today.month, self.cached_today.day)
 
 
+  def get_timestamped_directory_name(self, dirname):
+    return "{}-{}".format(dirname, self.cached_time)
+
   def delta(self, timestamp):
     return self.cached_time - timestamp
