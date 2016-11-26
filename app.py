@@ -8,9 +8,9 @@ import json
 def main():
   clock = Clock()
   database = Database.create_default(clock)
-  config = Config.create_default()
-  blender = Blender(database, clock)
-  mover = Mover(database, clock)
+  config = Config.create_default(clock)
+  blender = Blender(database)
+  mover = Mover(database)
 
   for tracked_directory in config.get_tracked_directories():
     if not tracked_directory.is_directory():

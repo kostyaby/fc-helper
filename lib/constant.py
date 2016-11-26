@@ -1,15 +1,12 @@
 class Constant:
   class Clock:
-    DIRECTORY_A_DAY_TEMPLATE = "Directory-%04d-%02d-%02d"   
     MILLIS_IN_SECOND = 1000
-    UNSORTED_TO_SORTED_THRESHOLD_MILLIS = 600000 # = 10 minutes
 
   class Config:
-    TRACKED_DIRECTORIES_KEY = "tracked_directories"
-    PATH_KEY = "path"
     IGNORE_REGEXES_KEY = "ignore_regexes"
-
-    DIRECTORY_A_DAY_REGEX = "^Directory-[0-9]{4}-[0-9]{2}-[0-9]{2}$"  
+    PATH_KEY = "path"
+    SORTING_STRATEGY_KEY = "sorting_strategy"
+    TRACKED_DIRECTORIES_KEY = "tracked_directories"
 
 
   class Database:
@@ -39,6 +36,14 @@ class Constant:
         TRACKED_ENTITY_TABLE_NAME, TRACKED_ENTITY_TRACKED_DIRECTORY_PATH_COLUMN, TRACKED_ENTITY_RELATED_PATH_COLUMN,\
         TRACKED_ENTITY_STATUS_COLUMN, TRACKED_ENTITY_CREATED_AT_COLUMN, TRACKED_ENTITY_UPDATED_AT_COLUMN,\
         TRACKED_ENTITY_ID_COLUMN)
+
+
+  class SortingStrategies:
+    class DirectoryADayStrategy:
+      TEMPLATE = "Directory-%04d-%02d-%02d"
+      REGEX = "^Directory-[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      # LIVETIME_THRESHOLD_MILLIS = 600000 # = 10 minutes
+      LIVETIME_THRESHOLD_MILLIS = 30 # = 10 minutes
 
                                 
   class System:

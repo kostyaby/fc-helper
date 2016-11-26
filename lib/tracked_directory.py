@@ -1,4 +1,5 @@
 from . import Constant
+from . import SortingStrategyFactory
 
 from datetime import date
 import glob
@@ -8,9 +9,10 @@ import re
 
 
 class TrackedDirectory:
-  def __init__(self, data):
+  def __init__(self, data, clock):
     self.path = os.path.expanduser(data[Constant.Config.PATH_KEY])
-    self.ignore_regexes = data[Constant.Config.IGNORE_REGEXES_KEY] + [Constant.Config.DIRECTORY_A_DAY_REGEX]
+    self.sorting_strategy = SortingStrategyFactory.create(data[Constant.Config.SORTING_STRATEGY_KEY], clock)
+    self.ignore_regexes = data[Constant.Config.IGNORE_REGEXES_KEY] + self.sorting_strategy.get_regexes_to_ignore()
 
 
   def is_directory(self):
@@ -25,14 +27,14 @@ class TrackedDirectory:
     return os.path.join(self.path, tracked_entity_path)
 
 
-  def validate_directory_a_day(self, directory_a_day_path):
-    directory_a_day_absolute_path = os.path.join(self.path, directory_a_day_path)
+  def validate_target_directory(self, target_directory_path):
+    absolute_path = os.path.join(self.path, target_directory_path)
 
-    if not os.path.exists(directory_a_day_absolute_path):
-      os.mkdir(directory_a_day_absolute_path)
+    if not os.path.exists(absolute_path):
+      os.mkdir(absolute_path)
 
-    if not os.path.isdir(directory_a_day_absolute_path):
-      print "The name that fc-helper wanted to use for a new date folder is taken by a file"
+    if not os.path.isdir(absolute_path):
+      print "Target directory's name is already taken by a plain file"
       return False
       
     return True

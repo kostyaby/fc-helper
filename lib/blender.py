@@ -2,9 +2,8 @@ from . import Constant
 
 
 class Blender:
-  def __init__(self, database, clock):
+  def __init__(self, database):
     self.database = database
-    self.clock = clock
 
 
   def blend(self, tracked_directory, crawled_tracked_entities):
@@ -21,9 +20,9 @@ class Blender:
           self.database.update_tracked_entity(tracked_entity)
         unsorted_tracked_entities.append(tracked_entity)
 
-    for id in crawled_tracked_entities.iterkeys():
-      if id not in stored_tracked_entities:
-        tracked_directory_path, related_path = id
+    for crawled_tracked_entity in crawled_tracked_entities.iterkeys():
+      if crawled_tracked_entity not in stored_tracked_entities:
+        tracked_directory_path, related_path = crawled_tracked_entity
         unsorted_tracked_entities.append(self.database.create_tracked_entity(tracked_directory_path, related_path))
 
     return unsorted_tracked_entities

@@ -1,13 +1,13 @@
 from . import Constant
 
+import filecmp
 import glob
 import os
 import shutil
 
 class Mover:
-  def __init__(self, database, clock):
+  def __init__(self, database):
     self.database = database
-    self.clock = clock
 
 
   def get_all_inner_entity_paths(self, path):
@@ -21,6 +21,8 @@ class Mover:
       new_absolute_file_path = os.path.join(new_absolute_path, inner_entity_path)
       if not os.path.exists(new_absolute_file_path):
         os.rename(old_absolute_file_path, new_absolute_file_path)
+      elif not os.path.isdir(old_absolute_file_path) and filecmp.cmp(old_absolute_file_path, new_absolute_file_path):
+        os.remove(old_absolute_file_path)
       else:
         unmerged_inner_entity_paths.append(inner_entity_path)
 
@@ -28,15 +30,16 @@ class Mover:
 
 
   def move(self, tracked_directory, unsorted_tracked_entities):
+    sorting_strategy = tracked_directory.sorting_strategy
     for tracked_entity in unsorted_tracked_entities:
-      if self.clock.delta(tracked_entity.updated_at) <= Constant.Clock.UNSORTED_TO_SORTED_THRESHOLD_MILLIS:
+      if sorting_strategy.should_be_skipped(tracked_entity):
         continue
 
-      directory_a_day_path = self.clock.get_directory_a_day_path(tracked_directory)
+      target_directory_path = sorting_strategy.get_target_directory_path()
       
-      if tracked_directory.validate_directory_a_day(directory_a_day_path):
+      if tracked_directory.validate_target_directory(target_directory_path):
         old_related_path = tracked_entity.related_path
-        new_related_path = os.path.join(directory_a_day_path, tracked_entity.related_path)
+        new_related_path = os.path.join(target_directory_path, tracked_entity.related_path)
 
         old_absolute_path = os.path.join(tracked_directory.path, old_related_path)
         new_absolute_path = os.path.join(tracked_directory.path, new_related_path)
@@ -47,8 +50,8 @@ class Mover:
           unmerged_inner_entity_paths = self.merge_directories(old_absolute_path, new_absolute_path)
 
           if len(unmerged_inner_entity_paths) > 0:
-            new_related_path = os.path.join(directory_a_day_path,\
-                                            self.clock.get_timestamped_directory_name(tracked_entity.related_path))
+            new_related_path = os.path.join(target_directory_path,\
+                                            sorting_strategy.avoid_naming_collisions(tracked_entity.related_path))
             new_absolute_path = os.path.join(tracked_directory.path, new_related_path)
             os.rename(old_absolute_path, new_absolute_path)
           else:
