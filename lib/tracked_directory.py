@@ -4,7 +4,6 @@ from . import SortingStrategyFactory
 from datetime import date
 import glob
 import os
-import os.path
 import re
 
 

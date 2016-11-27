@@ -1,14 +1,18 @@
 {
-	"tracked_directories": 
-	[
-		{
-			"path": "~/Downloads", 
-			"ignore_regexes": 
-			[
-				".download$",
-				".part$",
-				"^Torrents$"
-			]
-		}
-	]
+  "tracked_directories": [
+    {
+      "path": "~/Downloads",
+      "sorting_strategy": "directory_a_day",
+      "ignore_regexes": [
+        ".download$",
+        ".part$",
+        "^Torrents$"
+      ]
+    },
+    {
+      "path": "~/Downloads/Torrents",
+      "sorting_strategy": "smart_category",
+      "ignore_regexes": []
+    }
+  ]
 }

@@ -19,7 +19,7 @@ class Database:
     if row is None:
       return None
 
-    return TrackedEntity(row[0], row[1], row[2], row[3], row[4], row[5])
+    return TrackedEntity(row[0], row[1], row[2], row[3])
 
 
   @staticmethod
@@ -54,32 +54,26 @@ class Database:
     self.connection.execute(create_table_query)
 
 
-  def fetch_all_tracked_entities(self):
+  def fetch_tracked_entities_for(self, tracked_directory):
     cursor = self.connection.cursor()
-    cursor.execute(Constant.Database.SELECT_ALL_TRACKED_ENTITY_QUERY)
+    cursor.execute(Constant.Database.SELECT_TRACKED_ENTITY_FOR_TRACKED_DIRECTORY_QUERY, [tracked_directory.path])
     return Database.tracked_entities_list_to_dictionary(map(Database.map_row_to_tracked_entity, cursor.fetchall()))
 
 
   def create_tracked_entity(self, tracked_directory_path, related_path):
-    status = Constant.TrackedEntity.UNSORTED
     created_at = self.clock.cached_time
-    updated_at = self.clock.cached_time
 
     cursor = self.connection.cursor()
     cursor.execute(Constant.Database.INSERT_TRACKED_ENTITY_QUERY_TEMPLATE,\
-        [tracked_directory_path, related_path, status, created_at, updated_at])
+      [tracked_directory_path, related_path, created_at])
     self.connection.commit()
 
-    return TrackedEntity(cursor.lastrowid, tracked_directory_path, related_path, status, created_at, updated_at)
+    return TrackedEntity(cursor.lastrowid, tracked_directory_path, related_path, created_at)
 
 
-  def update_tracked_entity(self, tracked_entity):
-    tracked_entity.updated_at = self.clock.cached_time
-
+  def delete_tracked_entity(self, tracked_entity):
     cursor = self.connection.cursor()
-    cursor.execute(Constant.Database.UPDATE_TRACKED_ENTITY_QUERY_TEMPLATE,\
-        [tracked_entity.tracked_directory_path, tracked_entity.related_path, tracked_entity.status,\
-         tracked_entity.created_at, tracked_entity.updated_at, tracked_entity.id])
+    cursor.execute(Constant.Database.DELETE_TRACKED_ENTITY_QUERY_TEMPLATE, [tracked_entity.id])
     self.connection.commit()
 
 

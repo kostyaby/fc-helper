@@ -21,7 +21,7 @@ class Mover:
       new_absolute_file_path = os.path.join(new_absolute_path, inner_entity_path)
       if not os.path.exists(new_absolute_file_path):
         os.rename(old_absolute_file_path, new_absolute_file_path)
-      elif not os.path.isdir(old_absolute_file_path) and filecmp.cmp(old_absolute_file_path, new_absolute_file_path):
+      elif os.path.isfile(old_absolute_file_path) and filecmp.cmp(old_absolute_file_path, new_absolute_file_path):
         os.remove(old_absolute_file_path)
       else:
         unmerged_inner_entity_paths.append(inner_entity_path)
@@ -35,13 +35,13 @@ class Mover:
       if sorting_strategy.should_be_skipped(tracked_entity):
         continue
 
-      target_directory_path = sorting_strategy.get_target_directory_path()
+      target_directory_path = sorting_strategy.get_target_directory_path(tracked_entity)
       
       if tracked_directory.validate_target_directory(target_directory_path):
         old_related_path = tracked_entity.related_path
         new_related_path = os.path.join(target_directory_path, tracked_entity.related_path)
 
-        old_absolute_path = os.path.join(tracked_directory.path, old_related_path)
+        old_absolute_path = tracked_entity.get_absolute_path()
         new_absolute_path = os.path.join(tracked_directory.path, new_related_path)
 
         try:
@@ -57,6 +57,4 @@ class Mover:
           else:
             shutil.rmtree(old_absolute_path)
 
-        tracked_entity.related_path = new_related_path
-        tracked_entity.status = Constant.TrackedEntity.IGNORED_OR_MISSED
-        self.database.update_tracked_entity(tracked_entity)
+        self.database.delete_tracked_entity(tracked_entity)
